@@ -80,3 +80,117 @@ module.exports = {
     }
   }
 ```
+
+## 静态资源管理
+
+### css
+
+1. 安装对应的 loader： `npm install --save-dev style-loader css-loader`
+
+2. 配置 loader：
+
+```
+module: {
+    rules: [{
+      test: /\.css$/,
+      use: [
+        'style-loader',
+        'css-loader'
+      ]
+    }]
+  }
+```
+
+3. 入口文件中引用对应的 css 文件，在打包入口文件时， 会把对应的 css 代码插入到 index.html 的 head 中。
+
+### 图片
+
+1. 安装对应的 loader： `npm install --save-dev file-loader`
+
+2. 配置 loader：
+
+```
+{
+  test: /\.(png|svg|jpg|gif)$/,
+  use: [
+    'file-loader'
+  ]
+}
+```
+
+3. 入口文件中引用 图片，在打包文件时， 会生成目标文件夹中的最终 url，并将入口文件中的路径替换为最终路径。
+
+### 字体
+
+1. 配置 loader：
+
+```
+{
+  test: /\.(woff|woff2|eot|ttf|otf)$/,
+  use: [
+    'file-loader'
+  ]
+}
+```
+
+2. style 文件中引入字体，在打包时， 会生成目标文件夹中的最终 url，并将入口文件中的路径替换为最终路径。
+
+### 数据（json<默认支持>、xml、csv）
+
+1. 安装对应的 loader: `npm install --save-dev csv-loader xml-loader`
+
+2. 配置 loader：
+
+```
+{
+  test: /\.(csv|tsv)$/,
+  use: [
+    'csv-loader'
+  ]
+},
+{
+  test: /\.xml$/,
+  use: [
+    'xml-loader'
+  ]
+}
+```
+
+3. 在入口文件中引入对应的数据文件，打包之后，对应的数据文件会被处理为 json 格式的数据
+
+## 输出管理
+
+### 解决引用重复的问题
+
+1. 设定 HtmlWebpackPlugin
+
++ 安装 html-webpack-plugin: `npm install --save-dev html-webpack-plugin`
+
+2. 配置 HtmlWebpackPlugin
+
+```
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+plugins: [
+  new HtmlWebpackPlugin({
+    title: 'Output Management'
+  })
+],
+```
+
+3. 在打包时， HtmlWebpackPlugin 会生成新的 index.html 文件，替换就的 index.html 文件
+
+### 删除遗留的多余文件,在每次构建前清理 /dist 文件夹
+
+1. 安装插件: `npm install clean-webpack-plugin --save-dev`
+
+2. 配置插件:
+
+```
+const {
+  CleanWebpackPlugin
+} = require('clean-webpack-plugin');
+
+new CleanWebpackPlugin(),
+```
+

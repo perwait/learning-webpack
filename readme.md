@@ -68,7 +68,7 @@ module.exports = {
     "main": "index.js",
     "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-+     "build": "webpack --config webpack.config.js"
++     "build": "webpack"
     },
     "keywords": [],
     "author": "",
@@ -160,7 +160,7 @@ module: {
 
 ## 四、输出管理
 
-### 1. 解决引用重复的问题
+### 1. 解决引用重复的问题，每次打包生成新的 html 文件
 
 (1) 设定 HtmlWebpackPlugin
 
@@ -194,3 +194,72 @@ const {
 new CleanWebpackPlugin(),
 ```
 
+## 五、 开发环境配置
+
+### 1. 将编译后的代码映射回原始源代码 ———————— source map
+
+(1) 配置文件中添加 source map 配置： `devtool: 'inline-source-map'`
+
+(2) 入口文件有错误，控制台返回的错误路径是对应的源路径
+
+### 2. 自动编译代码
+
+(1) 观察模式：
+
++ 添加 script 脚本：`"watch": "webpack --watch"` 
+
++ `npm run watch`，每次更新入口文件，代码将自动编译，但是每次编译后，需要手动刷新浏览器，页面才会更新
+
+
+(2) webpack-dev-server（一个简单的web服务器，可以实时重新加载页面）
+
++ 安装： `npm install --save-dev webpack-dev-server`
+
++ 修改配置文件:，告知 webpack-dev-server 在哪里查找文件
+
+```
+devServer: {
+  contentBase: './dist'
+}
+```
+
++ 添加 script 脚本
+
+```
+"start": "webpack-dev-server --open",
+```
+
++ 修改源文件，web 服务器就会自动重新加载编译后的代码
+
+(3) webpack-dev-middleware（模块热替换），把 webpack 处理后的文件传递给一个服务器(server)
+
++ 安装 express 和 webpack-dev-middleware： `npm install --save-dev express webpack-dev-middleware`
+
++ 配置文件中 output 添加  publicPat 选项： `publicPath: '/'`
+
++ 自定义一个 express 服务，添加 server.js 文件，内容如下：
+
+```js
+const express = require('express');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+
+const app = express();
+const config = require('./webpack.config.js');
+const compiler = webpack(config);
+
+// Tell express to use the webpack-dev-middleware and use the webpack.config.js
+// configuration file as a base.
+app.use(webpackDevMiddleware(compiler, {
+  publicPath: config.output.publicPath
+}));
+
+// Serve the files on port 3000.
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!\n');
+});
+```
+
++ 添加 npm script： `"server": "node server.js",`
+
++ 执行 `npm run server`， 打开 http://localhost:3000/ 即是项目地址

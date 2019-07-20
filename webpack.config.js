@@ -6,10 +6,12 @@ const {
 
 
 module.exports = {
+  mode: 'development',
   entry: {
     app: './src/index.js',
     print: './src/print.js'
   },
+  devtool: 'inline-source-map',
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
@@ -19,6 +21,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
+    publicPath: '/'
   },
   module: {
     rules: [{

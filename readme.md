@@ -263,3 +263,46 @@ app.listen(3000, function () {
 + 添加 npm script： `"server": "node server.js",`
 
 + 执行 `npm run server`， 打开 http://localhost:3000/ 即是项目地址
+
+## 六、 模块热替换（Hot Module Replacement | HMR）
+
+### 1. 添加 webpack 自带的插件 NamedModulesPlugin 和 HotModuleReplacementPlugin
+
+```
+const webpack = require('webpack');
+
+devServer: {
+  contentBase: './dist',
+  hot: true
+},
+
+plugins: [
+  new webpack.NamedModulesPlugin(),
+  new webpack.HotModuleReplacementPlugin()
+],
+```
+
+### 2. 修改 index.js 文件，监听该文件所引用的外部文件的更新状况
+
+```js
+if (module.hot) {
+  module.hot.accept('./print.js', function() {
+    console.log('Accepting the updated printMe module!');
+    printMe();
+  })
+}
+```
+
+### 3. css 等静态资源加载了相应的 loader，会自动更新
+
+### 4. 其他热更新 loader或插件
+
++ React Hot Loader：实时调整 react 组件。
+
++ Vue Loader：此 loader 支持用于 vue 组件的 HMR，提供开箱即用体验。
+
++ Elm Hot Loader：支持用于 Elm 程序语言的 HMR。
+
++ Redux HMR：无需 loader 或插件！只需对 main store 文件进行简单的修改。
+
++ Angular HMR：没有必要使用 loader！只需对主要的 NgModule 文件进行简单的修改，由 HMR API 完全控制。

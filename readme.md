@@ -178,7 +178,7 @@ plugins: [
 ],
 ```
 
-(3) 在打包时， HtmlWebpackPlugin 会生成新的 index.html 文件，替换就的 index.html 文件
+(3) 在打包时， HtmlWebpackPlugin 会生成新的 index.html 文件，替换旧的 index.html 文件
 
 ### 2. 删除遗留的多余文件,在每次构建前清理 /dist 文件夹
 
@@ -196,7 +196,7 @@ new CleanWebpackPlugin(),
 
 ## 五、 开发环境配置
 
-### 1. 将编译后的代码映射回原始源代码 ———————— source map
+### 1. 将编译后的代码映射回原始源代码 ————— source map
 
 (1) 配置文件中添加 source map 配置： `devtool: 'inline-source-map'`
 
@@ -306,3 +306,179 @@ if (module.hot) {
 + Redux HMR：无需 loader 或插件！只需对 main store 文件进行简单的修改。
 
 + Angular HMR：没有必要使用 loader！只需对主要的 NgModule 文件进行简单的修改，由 HMR API 完全控制。
+
+## 七、 输出优化
+
+### 1. 移除 JavaScript 上下文中的未引用代码(dead-code) ———— tree shaking，将文件标记为无副作用
+
+package.json 文件设置 sideEffects 属性 
+
+```js
+"sideEffects": [
+  "./src/some-side-effectful-file.js",
+  "*.css"
+]
+```
+
+### 2. 压缩输出，设置编译模式为 production
+
+```js
+mode: "production"
+```
+
+## 八、 生产环境构建
+
+### 1. 构建目标比较
+
+**生产环境构建目标：** 更小的 bundle、更轻量的 source map、更优化的资源、更短的加载时间
+
+**开发环境构建目标：** 强大的 source map 和具有热模块替换能力的 localhost server
+
+### 2. 针对不同环境配置 webpack
+
+(1) 安装 webpack-merge：`npm install --save-dev webpack-merge`
+
+(2) 针对不同的环境创建对应的配置文件
+
+```js
+// webpack.common.js
+const path = require('path');
+const {
+  CleanWebpackPlugin
+} = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+  entry: {
+    app: './src/index.js'
+  },
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Production'
+    })
+  ],
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  module: {
+    rules: [{
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'file-loader'
+        ]
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: [
+          'file-loader'
+        ]
+      },
+      {
+        test: /\.(csv|tsv)$/,
+        use: [
+          'csv-loader'
+        ]
+      },
+      {
+        test: /\.xml$/,
+        use: [
+          'xml-loader'
+        ]
+      }
+    ]
+  }
+};
+```
+
+```js
+// webpack.dev.js
+const merge = require('webpack-merge');
+const common = require('./webpack.common.js');
+const webpack = require('webpack');
+
+module.exports = merge(common, {
+  mode: 'development',
+  devtool: 'inline-source-map',
+  devServer: {
+    contentBase: './dist'
+  },
+  plugins: [
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin()
+  ]
+});
+```
+
+```js
+//webpack.prod.js
+const merge = require('webpack-merge');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const common = require('./webpack.common.js');
+
+module.exports = merge(common, {
+  mode: 'production',
+  plugins: [
+    new UglifyJSPlugin({sourceMap: true}) // 不支持 es6 语法的压缩
+  ]
+});
+```
+
+(3) 修改 NPM Script
+
+```js
+"start": "webpack-dev-server --open --config webpack.dev.js",
+"build": "webpack --config webpack.prod.js"
+```
+
+## 九、 代码分离
+
+### 1. 针对多个文件指定对应的入口
+
+### 2. 把多个地方引用的代码分离到一个文件中，防止重复引用
+
+```js
+optimization: {
+  runtimeChunk: {
+    name: "manifest"
+  },
+  splitChunks: {
+    cacheGroups: {
+      commons: {
+        test: /[\\/]node_modules[\\/]/,
+        name: "vendor",
+        chunks: "all"
+      }
+    }
+  }
+}
+```
+
+### 3. 动态导入
+
+```js
+// output 添加 chunkFilename 字段
+chunkFilename: '[name].bundle.js',
+```
+
+```js
+// index.js 动态引入库，编译之后可以看到对应的 loadash-chunk
+async function getComponent() {
+  var element = document.createElement('div');
+
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+
+  return element;
+}
+getComponent().then(component => {
+  document.body.appendChild(component);
+})
+```

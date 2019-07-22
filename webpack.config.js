@@ -7,12 +7,12 @@ const webpack = require('webpack');
 
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: {
     app: './src/index.js',
     // print: './src/print.js'
   },
-  devtool: 'inline-source-map',
+  // devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
     hot: true

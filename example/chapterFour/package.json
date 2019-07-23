@@ -1,0 +1,26 @@
+{
+  "name": "chapterFour",
+  "private": true,
+  "version": "1.0.0",
+  "description": "chapterOne",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --open",
+    "server": "node server.js",
+    "watch": "webpack --watch",
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "Canace",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.5",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-middleware": "^3.7.0",
+    "webpack-dev-server": "^3.7.2",
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^3.2.0"
+  }
+}

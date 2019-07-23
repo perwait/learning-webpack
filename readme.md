@@ -1,4 +1,4 @@
-# webpack 
+# Learning Webpack 
 
 ## 一、安装
 
@@ -29,7 +29,7 @@ npm install webpack/webpack#<tagname/branchname>
 ### 3. 运行
 
 ```
-webpack --config webpack.config.js
+webpack
 ```
 
 ## 二、入门
@@ -44,25 +44,38 @@ npm init -y
 npm install webpack webpack-cli --save-dev
 ```
 
-### 2. 创建配置文件 webpack.config.js
+### 2. 初始化源码目录
+
+```
+mkdir src
+cd src
+new-item index.js
+cd ..
+mkdir dist
+cd dist
+new-item index.html
+```
+
+### 3. 创建配置文件 webpack.config.js
 
 ```
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.js', // 入口文件地址
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    filename: 'bundle.js', // 出口文件名
+    path: path.resolve(__dirname, 'dist') // 告诉 webpack 在哪里生成文件
   }
 };
 ```
 
-### 3. 添加 npm 脚本
+### 4. 添加 npm 脚本
 
 ```
  {
     "name": "webpack-demo",
+    "private": true,
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -81,7 +94,13 @@ module.exports = {
   }
 ```
 
+### 5. 开始使用 webpack 打包：`npm run build`
+
+> 具体事例请参考 example 目录下的 chapterOne
+
 ## 三、静态资源管理
+
+### 0. 创建静态资源目录 asset
 
 ### 1. css
 
@@ -89,7 +108,7 @@ module.exports = {
 
 (2) 配置 loader：
 
-```
+```js
 module: {
     rules: [{
       test: /\.css$/,
@@ -101,7 +120,7 @@ module: {
   }
 ```
 
-(3) 入口文件中引用对应的 css 文件，在打包入口文件时， 会把对应的 css 代码插入到 index.html 的 head 中。
+(3) 静态资源目录添加 style.css 文件，在入口文件中引用，在打包时， webpack 会把对应的 css 代码插入到 index.html 的 head 中。
 
 ### 2. 图片
 
@@ -109,7 +128,7 @@ module: {
 
 (2) 配置 loader：
 
-```
+```js
 {
   test: /\.(png|svg|jpg|gif)$/,
   use: [
@@ -118,7 +137,7 @@ module: {
 }
 ```
 
-(3) 入口文件中引用 图片，在打包文件时， 会生成目标文件夹中的最终 url，并将入口文件中的路径替换为最终路径。
+(3) 静态资源目录添加一张图片，在入口文件中引用，打包时， webpack 会生成目标文件夹中的最终 url，并将入口文件中的路径替换为最终路径。
 
 ### 3. 字体
 
@@ -133,7 +152,7 @@ module: {
 }
 ```
 
-(2) style 文件中引入字体，在打包时， 会生成目标文件夹中的最终 url，并将入口文件中的路径替换为最终路径。
+(2) 静态资源目录添加字体，在入口文件中引用，打包时， webpack 会生成目标文件夹中的最终 url，并将入口文件中的路径替换为最终路径。
 
 ### 4. 数据（json<默认支持>、xml、csv）
 
@@ -156,9 +175,33 @@ module: {
 }
 ```
 
-(3) 在入口文件中引入对应的数据文件，打包之后，对应的数据文件会被处理为 json 格式的数据
+(3) 静态资源目录添加对应的数据文件，在入口文件中引用数据文件, 打包之后，对应的数据文件会被处理为 json 格式的数据
+
+> 具体事例请参考 example 目录下的 chapterTwo
 
 ## 四、输出管理
+
+### 0. 入口分离
+
+(1) 源码目录中新建 print.js 文件，并在 index.js 中引用对应模块，index.js 中引用对应的包
+
+(2) webpack 配置修改：
+
+```js
+const path = require('path');
+
+module.exports = {
+  mode: 'development',
+  entry: {
+    app: './src/index.js',
+    print: './src/print.js'
+  },
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  }
+};
+```
 
 ### 1. 解决引用重复的问题，每次打包生成新的 html 文件
 
@@ -194,6 +237,8 @@ const {
 new CleanWebpackPlugin(),
 ```
 
+> 具体事例请参考 example 目录下的 chapterThree
+
 ## 五、 开发环境配置
 
 ### 1. 将编译后的代码映射回原始源代码 ————— source map
@@ -211,11 +256,11 @@ new CleanWebpackPlugin(),
 + `npm run watch`，每次更新入口文件，代码将自动编译，但是每次编译后，需要手动刷新浏览器，页面才会更新
 
 
-(2) webpack-dev-server（一个简单的web服务器，可以实时重新加载页面）
+(2) webpack-dev-server（一个简单的web服务器，可以实时重新加载页面）（官方推荐使用）
 
 + 安装： `npm install --save-dev webpack-dev-server`
 
-+ 修改配置文件:，告知 webpack-dev-server 在哪里查找文件
++ 修改配置文件：告知 webpack-dev-server 在哪里查找文件
 
 ```
 devServer: {

@@ -1,86 +1,10 @@
 # Learning Webpack 
 
-## 目录
-
-### 一、[安装](#一、安装)
-
-  1. [本地安装](#1.本地安装)
-
-  2. [全局安装](#2.全局安装（官方不推荐）)
-
-  3. [最新体验版安装](#3.最新体验版安装)
-
-  4. [运行](#3.运行)
-
-### 二、[入门](#二、入门)
-
-  1. [项目初始化](#1.项目初始化)
-
-  2. [初始化源码目录](#2.初始化源码目录)
-
-  3. [创建配置文件webpack.config.js](#3.创建配置文件webpack.config.js)
-
-  4. [添加npm脚本](#4.添加npm脚本)
-
-### 三、[静态资源管理](#三、静态资源管理)
-
-  1. [创建静态资源目录asset](#0.创建静态资源目录asset)
-
-  2. [css](#1.css)
-
-  3. [图片](#2.图片)
-
-  4. [字体](#3字体)
-
-  5. [数据（json<默认支持>、xml、csv）](#4.数据（json<默认支持>、xml、csv）)
-
-### 四、[输出管理](#四、输出管理)
-
-  1. [入口分离](#0.入口分离)
-
-  2. [解决引用重复的问题，每次打包生成新的html文件](#1.解决引用重复的问题，每次打包生成新的html文件)
-
-  3. [删除遗留的多余文件,在每次构建前清理/dist文件夹](#2.删除遗留的多余文件,在每次构建前清理/dist文件夹)
-
-### 五、[开发环境配置](#五、开发环境配置)
-
-  1. [将编译后的代码映射回原始源代码 ————— source map](#1.将编译后的代码映射回原始源代码)
-
-  2. [自动编译代码](#2.自动编译代码)
-
-### 六、[模块热替换(Hot Module Replacement | HMR)](#六、模块热替换)
-
-  1. [添加 webpack 自带的插件 NamedModulesPlugin 和 HotModuleReplacementPlugin](#1.添加webpack自带的插件NamedModulesPlugin和HotModuleReplacementPlugin)
-
-  2. [修改 index.js 文件，监听该文件所引用的外部文件的更新状况](#2.修改index.js文件，监听该文件所引用的外部文件的更新状况)
-
-  3. [css 等静态资源加载了相应的 loader，会自动更新](#3.css等静态资源加载了相应的loader，会自动更新)
-
-  4. [其他热更新 loader 或插件](#4.其他热更新loader或插件)
-
-### 七、[输出优化](#七、输出优化)
-
-  1. [移除 JavaScript 上下文中的未引用代码(dead-code)————tree shaking，将文件标记为无副作用](#1.移除JavaScript上下文中的未引用代码(dead-code))
-
-  2. [压缩输出，设置编译模式为 production](#2.压缩输出，设置编译模式为production)
-
-### 八、[生产环境构建](#八、生产环境构建)
-
-  1. [构建目标比较](#1.构建目标比较)
-
-  2. [针对不同环境配置 webpack](#2.针对不同环境配置webpack)
-
-### 九、[代码分离](#九、代码分离)
-
-  1. [针对多个文件指定对应的入口](#1.针对多个文件指定对应的入口)
-
-  2. [把多个地方引用的代码分离到一个文件中，防止重复引用](#2.把多个地方引用的代码分离到一个文件中，防止重复引用)
-
-  3. [动态导入](#3.动态导入)
+[TOC]
 
 ## 一、安装
 
-### 1.本地安装
+### 1. 本地安装
 
 ```
 # webpack 4+ 版本
@@ -91,20 +15,20 @@ npm install --save-dev webpack
 npm install --save-dev webpack@<version>
 ```
 
-### 2.全局安装（官方不推荐）
+### 2. 全局安装（官方不推荐）
 
 ```
 npm install --global webpack
 ```
 
-### 3.最新体验版安装
+### 3. 最新体验版安装
 
 ```
 npm install webpack@beta
 npm install webpack/webpack#<tagname/branchname>
 ```
 
-### 3.运行
+### 3. 运行
 
 ```
 webpack
@@ -112,7 +36,7 @@ webpack
 
 ## 二、入门
 
-### 1.项目初始化
+### 1. 项目初始化
 
 ```
 mkdir webpack-demo && cd webpack-demo
@@ -122,7 +46,7 @@ npm init -y
 npm install webpack webpack-cli --save-dev
 ```
 
-### 2.初始化源码目录
+### 2. 初始化源码目录
 
 ```
 mkdir src
@@ -134,7 +58,7 @@ cd dist
 new-item index.html
 ```
 
-### 3.创建配置文件webpack.config.js
+### 3. 创建配置文件 webpack.config.js
 
 ```
 const path = require('path');
@@ -148,7 +72,7 @@ module.exports = {
 };
 ```
 
-### 4.添加npm脚本
+### 4. 添加npm脚本
 
 ```
  {
@@ -172,15 +96,15 @@ module.exports = {
   }
 ```
 
-### 5.开始使用 webpack 打包：`npm run build`
+### 5. 开始使用 webpack 打包：`npm run build`
 
 > 具体事例请参考 example 目录下的 chapterOne
 
 ## 三、静态资源管理
 
-### 0.创建静态资源目录asset
+### 0. 创建静态资源目录 asset
 
-### 1.css
+### 1. css
 
 (1) 安装对应的 loader： `npm install --save-dev style-loader css-loader`
 
@@ -200,7 +124,7 @@ module: {
 
 (3) 静态资源目录添加 style.css 文件，在入口文件中引用，在打包时， webpack 会把对应的 css 代码插入到 index.html 的 head 中。
 
-### 2.图片
+### 2. 图片
 
 (1) 安装对应的 loader： `npm install --save-dev file-loader`
 
@@ -217,7 +141,7 @@ module: {
 
 (3) 静态资源目录添加一张图片，在入口文件中引用，打包时， webpack 会生成目标文件夹中的最终 url，并将入口文件中的路径替换为最终路径。
 
-### 3.字体
+### 3. 字体
 
 (1) 配置 loader：
 
@@ -232,7 +156,7 @@ module: {
 
 (2) 静态资源目录添加字体，在入口文件中引用，打包时， webpack 会生成目标文件夹中的最终 url，并将入口文件中的路径替换为最终路径。
 
-### 4.数据（json<默认支持>、xml、csv）
+### 4. 数据（json<默认支持>、xml、csv）
 
 (1) 安装对应的 loader: `npm install --save-dev csv-loader xml-loader`
 
@@ -259,7 +183,7 @@ module: {
 
 ## 四、输出管理
 
-### 0.入口分离
+### 0. 入口分离
 
 (1) 源码目录中新建 print.js 文件，并在 index.js 中引用对应模块，index.js 中引用对应的包
 
@@ -281,7 +205,7 @@ module.exports = {
 };
 ```
 
-### 1.解决引用重复的问题，每次打包生成新的html文件
+### 1. 解决引用重复的问题，每次打包生成新的 html 文件
 
 (1) 设定 HtmlWebpackPlugin
 
@@ -301,7 +225,7 @@ plugins: [
 
 (3) 在打包时， HtmlWebpackPlugin 会生成新的 index.html 文件，替换旧的 index.html 文件
 
-### 2.删除遗留的多余文件,在每次构建前清理/dist文件夹
+### 2. 删除遗留的多余文件,在每次构建前清理 /dist 文件夹
 
 (1) 安装插件: `npm install clean-webpack-plugin --save-dev`
 
@@ -319,13 +243,13 @@ new CleanWebpackPlugin(),
 
 ## 五、开发环境配置
 
-### 1.将编译后的代码映射回原始源代码
+### 1. 将编译后的代码映射回原始源代码
 
 (1) 配置文件中添加 source map 配置： `devtool: 'inline-source-map'`
 
 (2) 入口文件有错误，控制台返回的错误路径是对应的源路径
 
-### 2.自动编译代码
+### 2. 自动编译代码
 
 (1) 观察模式：
 
@@ -391,7 +315,7 @@ app.listen(3000, function () {
 
 ## 六、模块热替换
 
-### 1.添加webpack自带的插件NamedModulesPlugin和HotModuleReplacementPlugin
+### 1. 添加 webpack 自带的插件 NamedModulesPlugin 和 HotModuleReplacementPlugin
 
 ```
 const webpack = require('webpack');
@@ -407,7 +331,7 @@ plugins: [
 ],
 ```
 
-### 2.修改index.js文件，监听该文件所引用的外部文件的更新状况
+### 2. 修改 index.js 文件，监听该文件所引用的外部文件的更新状况
 
 ```js
 if (module.hot) {
@@ -418,9 +342,9 @@ if (module.hot) {
 }
 ```
 
-### 3.css等静态资源加载了相应的loader，会自动更新
+### 3. css 等静态资源加载了相应的 loader，会自动更新
 
-### 4.其他热更新loader或插件
+### 4.其他热更新 loader 或插件
 
 + React Hot Loader：实时调整 react 组件。
 
@@ -434,7 +358,7 @@ if (module.hot) {
 
 ## 七、输出优化
 
-### 1.移除JavaScript上下文中的未引用代码(dead-code)
+### 1. 移除 JavaScript 上下文中的未引用代码(dead-code)
 
 package.json 文件设置 sideEffects 属性 
 
@@ -445,7 +369,7 @@ package.json 文件设置 sideEffects 属性
 ]
 ```
 
-### 2.压缩输出，设置编译模式为production
+### 2.压缩输出，设置编译模式为 production
 
 ```js
 mode: "production"
@@ -459,7 +383,7 @@ mode: "production"
 
 **开发环境构建目标：** 强大的 source map 和具有热模块替换能力的 localhost server
 
-### 2.针对不同环境配置webpack
+### 2.针对不同环境配置 webpack
 
 (1) 安装 webpack-merge：`npm install --save-dev webpack-merge`
 
